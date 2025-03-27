@@ -1,0 +1,6 @@
+@OrnekApiCalismasi_HostAddress = http://localhost:5116
+
+GET {{OrnekApiCalismasi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
