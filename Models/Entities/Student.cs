@@ -6,5 +6,5 @@ public class Student
     public string Name { get; set; }
     public DateTime Created { get; set; }
 
-    public ICollection<Classroom> Classrooms { get; set; } = new List<Classroom>();
+    public ICollection<Classroom> Classrooms { get; set; }
 }
