@@ -1,26 +1,28 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OrnekApiCalismasi.Data;
 using OrnekApiCalismasi.Models.Dtos.Teacher;
 
 namespace OrnekApiCalismasi.Controllers;
 
 [Route("[controller]")]
-public class TeachersController(AppDbContext context) : ControllerBase
+public class TeachersController(AppDbContext context, IMapper mapper) : ControllerBase
 {
+    private readonly AppDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
+    
     [HttpGet]
     public IActionResult ListTeachers()
     {
-        var teachers = context.Teachers
-                                .Select(t => new TeacherDto { Id = t.Id, Name = t.Name })
-                                .ToArray();
-        
+        var teachers = _mapper.Map<TeacherDto[]>(_context.Teachers.ToArray());
         return Ok(teachers);
     }
 
     [HttpGet("{id}")]
     public IActionResult GetTeacher(int id)
     {
-        var teacher = context.Teachers.Find(id);
+        var teacher = _context.Teachers.Find(id);
         // find doğrudan primary key üzerinde arama yapar
         // FirstOrDefault'tan daha hızlı çalışır
         // bulamazsa null döner
@@ -44,15 +46,33 @@ public class TeachersController(AppDbContext context) : ControllerBase
             return BadRequest(new { Message = "Eksik veya hatalı giriş yaptınız." });
         }
         
-        var newTeacher = new Teacher {
-            Name = teacher.Name,
-        };
+        // var newTeacher = new Teacher {
+        //     Name = teacher.Name,
+        // };
+        var newTeacher = _mapper.Map<Teacher>(teacher);
         
-        context.Teachers.Add(newTeacher);
-        context.SaveChanges();
+        _context.Teachers.Add(newTeacher);
+        _context.SaveChanges();
+        
+        var result = _mapper.Map<TeacherDto>(newTeacher);
         
         // hangi id ile eklendiğini belirtmek ve oluşturulma tarihini göstermek istiyorsam newTeacher dönmeliyim
         // eğer sadece işlemin başarılı olduğunu söyleyeceksem. new { success = True } gibi bir sonuç dönebilirim.
-        return Ok(newTeacher);
+        // return Ok(result);
+        
+        return CreatedAtAction(nameof(GetTeacher), new { id = result.Id }, result);
+    }
+
+    [HttpGet("{id}/details")]
+    public IActionResult TeacherDetails(int id)
+    {
+        var teacher = _context.Teachers
+            .Include(t => t.Classrooms)
+                .ThenInclude(c => c.Students)
+            .FirstOrDefault(t => t.Id == id);
+        
+        var result = _mapper.Map<TeacherDetailDto>(teacher);
+        
+        return Ok(result);
     }
 }
