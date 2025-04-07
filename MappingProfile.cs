@@ -5,7 +5,7 @@ using OrnekApiCalismasi.Models.Dtos.Teacher;
 
 namespace OrnekApiCalismasi;
 
-public class MappingProfile : Profile
+public class MappingProfile : Profile // AutoMapper NugetPack'i indirdikten sonra bu işlemi yapmamız gerekiyor.
 {
     public MappingProfile()
     {

@@ -27,7 +27,7 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddAutoMapper(typeof(Program).Assembly);
+        builder.Services.AddAutoMapper(typeof(Program).Assembly); // AutoMapper Kullanacağımız Zaman bunu kullanmamız gerekiyor.
         
         builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
         
