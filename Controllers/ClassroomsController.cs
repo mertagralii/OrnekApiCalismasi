@@ -18,7 +18,7 @@ namespace OrnekApiCalismasi.Controllers
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        public ClassroomsController(AppDbContext context, IMapper mapper)
+        public ClassroomsController(AppDbContext context, IMapper mapper) // mapper
         {
             _context = context;
             _mapper = mapper;
